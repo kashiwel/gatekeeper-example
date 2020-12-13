@@ -1,0 +1,22 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: envmatched
+spec:
+  crd:
+    spec:
+      names:
+        kind: EnvMatched
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package envmatched
+        
+        violation[{"msg": msg}] {
+          env := input.review.object.metadata.annotations[input.parameters.envName]
+          config := data.inventory.namespace["gatekeeper-system"]["v1"]["ConfigMap"]["gatekeeper-config"]
+
+          config.data.env != env
+
+          msg := sprintf("expected: %v, actual: %v", [config.data.env, env])
+        }

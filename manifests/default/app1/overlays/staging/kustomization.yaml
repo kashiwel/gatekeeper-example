@@ -1,0 +1,6 @@
+bases:
+  - ../../base
+patchesStrategicMerge:
+  - deploy.yaml
+commonAnnotations:
+  kashiwel.com/env: staging
